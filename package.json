@@ -1,0 +1,36 @@
+{
+  "name": "vanilla-ecommerce-api",
+  "version": "1.0.0",
+  "description": "A high-performance, production-ready E-commerce RESTful API built entirely with **pure Node.js** (no Express, Fastify, or other HTTP frameworks). This project demonstrates a deep understanding of Node.js core modules, asynchronous streams, custom routing, and clean software architecture.",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "node --test test/**/*.test.js",
+    "start": "node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PakoAmadi/node-vanilla-ecommerce-api.git"
+  },
+  "keywords": [
+    "ecomerce",
+    "vanillajs",
+    "restful",
+    "nodejs",
+    "asynchronous",
+    "streams",
+    "custom",
+    "routing",
+    "clea",
+    "software",
+    "architecture"
+  ],
+  "author": "Pako Amadi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PakoAmadi/node-vanilla-ecommerce-api/issues"
+  },
+  "homepage": "https://github.com/PakoAmadi/node-vanilla-ecommerce-api#readme",
+  "devDependencies": {
+    "@types/node": "^26.1.2"
+  }
+}
