@@ -22,7 +22,7 @@ class Database {
             });
 
             await this.pool.query('SELECT NOW()');
-            console.log(`[DATABASE]: Successfully connected to PostgreSQL database: "${process.env.PG_DB_NAME || 'vanilla_ecommerce'}"`);
+            console.log(`[DATABASE]: Successfully connected to PostgreSQL database: "${process.env.PG_DB_NAME || 'vanilla_ecomerce'}"`);
 
             await this.#initializeSchema();
             return this.pool;

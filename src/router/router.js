@@ -6,6 +6,11 @@ module.exports = class Router {
     }
 
     #addRoute(method, path, handler) {
+
+        if (typeof handler !== 'function') {
+            throw new TypeError(`Handler for ${method} ${path} must be a function, received ${typeof handler}`);
+        }
+
         if (path.includes(':')) {
             const paramNames = [];
             const regexPath = path.replace(/:([^/]+)/g, (_, paramName) => {
