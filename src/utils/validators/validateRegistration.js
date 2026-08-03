@@ -23,12 +23,6 @@ const validateRegistration = (data) => {
     if (Object.keys(errors).length > 0) {
         throw new BadRequestError(JSON.stringify({ validationErrors: errors }));
     }
-
-    return {
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        password
-    };
 };
 
 module.exports = {
