@@ -38,11 +38,19 @@ class MethodNotAllowedError extends HttpError {
     }
 }
 
+// Error: Conflict error (409)
+class ConflictError extends HttpError {
+    constructor(message = 'Conflict') {
+        super(message, 409);
+    }
+}
+
 module.exports = {
     HttpError,
     PayloadTooLargeError,
     BadRequestError,
     NotFoundError,
-    MethodNotAllowedError
+    MethodNotAllowedError,
+    ConflictError
 };
 

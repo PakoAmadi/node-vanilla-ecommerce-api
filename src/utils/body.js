@@ -1,6 +1,6 @@
 'use strict';
 
-import {BadRequestError, PayloadTooLargeError} from "../errors/errors";
+const {BadRequestError, PayloadTooLargeError} = require("../errors/errors");
 
 const MAX_BODY_SIZE = 1024 * 1024;
 
@@ -26,4 +26,4 @@ const receiveArgs = async (req) => {
     }
 }
 
-module.exports = receiveArgs()
+module.exports = receiveArgs
