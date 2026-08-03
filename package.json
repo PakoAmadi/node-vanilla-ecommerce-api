@@ -32,5 +32,8 @@
   "homepage": "https://github.com/PakoAmadi/node-vanilla-ecommerce-api#readme",
   "devDependencies": {
     "@types/node": "^26.1.2"
+  },
+  "dependencies": {
+    "pg": "^8.22.0"
   }
 }
