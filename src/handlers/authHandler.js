@@ -5,6 +5,9 @@ const {ConflictError} = require("../errors/errors");
 const db = require('../database/db')
 
 const authHandler = {
+    async login(req, res, params, ctx) {
+
+    },
 
     async register(req, res, params, ctx) {
         const {name, email, password} = ctx.body

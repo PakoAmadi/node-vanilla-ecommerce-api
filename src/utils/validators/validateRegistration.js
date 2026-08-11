@@ -2,7 +2,7 @@
 
 const {BadRequestError}  = require('../../errors/errors')
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const {EMAIL_REGEX} =  require('../constants')
 
 const validateRegistration = (data) => {
     const { name, email, password } = data;
