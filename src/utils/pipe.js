@@ -7,7 +7,7 @@ const pipe = (...stages) => {
             const ctx = await prev;
             if (res.headersSent) return ctx;
             const nextCtx = await current(req, res, params, ctx);
-            return nextCtx || ctx;
+            return { ...ctx, ...nextCtx };
         }, Promise.resolve(initialCtx))
     }
 }
