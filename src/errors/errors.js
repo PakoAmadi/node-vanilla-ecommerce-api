@@ -44,6 +44,12 @@ class ConflictError extends HttpError {
         super(message, 409);
     }
 }
+// Error: 401 Unauthorized
+class UnauthorizedError extends HttpError {
+    constructor(message = 'Unauthorized') {
+        super(message, 401);
+    }
+}
 
 module.exports = {
     HttpError,
@@ -51,6 +57,7 @@ module.exports = {
     BadRequestError,
     NotFoundError,
     MethodNotAllowedError,
-    ConflictError
+    ConflictError,
+    UnauthorizedError
 };
 
