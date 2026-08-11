@@ -1,12 +1,26 @@
 'use strict';
 
-const {hash} = require('../utils/hash')
-const {ConflictError} = require("../errors/errors");
+const {hash, verifyPassword} = require('../utils/hash');
+const {ConflictError, UnauthorizedError} = require("../errors/errors");
 const db = require('../database/db')
+const { generateToken } = require('../utils/jwt')
 
 const authHandler = {
     async login(req, res, params, ctx) {
+        const {email, password} = ctx.body
+        try {
+            const selectQuery = `SELECT * FROM users WHERE email = $1`;
+            const result = await db.query(selectQuery, [email]);
+            if (result.rows.length === 0) throw new UnauthorizedError('Wrong email or password!');
+            const storedHash = result.rows[0].password;
+            const matched = await verifyPassword(password, storedHash)
+            if (!matched) throw new UnauthorizedError('Wrong email or password!')
 
+            const token = generateToken()
+
+        } catch(error) {
+            throw error
+        }
     },
 
     async register(req, res, params, ctx) {
