@@ -18,8 +18,8 @@ const receiveArgs = async (req) => {
         }
         const data = Buffer.concat(buffers).toString();
         if (!data.trim()) return {};
-        return JSON.parse(data);
 
+        return JSON.parse(data);
     } catch (error) {
         if (error.statusCode) throw error;
         throw new BadRequestError('Invalid JSON payload');

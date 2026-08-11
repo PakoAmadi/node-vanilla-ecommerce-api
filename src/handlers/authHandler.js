@@ -1,26 +1,18 @@
 'use strict';
 
-const receiveArgs = require('../utils/body')
-const sanitizeRegistrationData = require('../utils/sanitizers/sanitizeRegistrationData')
-const {validateRegistration} = require("../utils/validators/validateRegistration");
 const {hash} = require('../utils/hash')
 const {ConflictError} = require("../errors/errors");
+const db = require('../database/db')
 
 const authHandler = {
 
-    async register(req, res) {
-        const rawBody = await receiveArgs(req)
-        const sanitizedData = sanitizeRegistrationData(rawBody);
-        validateRegistration(sanitizedData);
-        const hashedPassword = await hash(sanitizedData.password);
+    async register(req, res, params, ctx) {
+        const {name, email, password} = ctx.body
+        const hashedPassword = await hash(password);
 
         try {
             const insertQuery = `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, role, created_at;`;
-            const result = await db.query(insertQuery, [
-                sanitizedData.name,
-                sanitizedData.email,
-                hashedPassword
-            ]);
+            const result = await db.query(insertQuery, [name, email, hashedPassword]);
 
             const newUser = result.rows[0];
             res.writeHead(201);
