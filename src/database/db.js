@@ -52,6 +52,21 @@ class Database {
         `;
     await this.pool.query(createUsersTableQuery);
     await this.pool.query('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);');
+
+    const createProductsTableQuery = `
+            CREATE TABLE IF NOT EXISTS products (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                price NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
+                stock INT DEFAULT 0 NOT NULL CHECK (stock >= 0),
+                image_url VARCHAR(512),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+            );
+        `;
+    await this.pool.query(createProductsTableQuery);
+    await this.pool.query('CREATE INDEX IF NOT EXISTS idx_products_title ON products(title);');
+
     console.log('[DATABASE]: Database schema and indexes verified.');
   }
 

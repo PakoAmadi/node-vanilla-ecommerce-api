@@ -8,34 +8,29 @@ const {generateToken} = require('../utils/jwt')
 const authHandler = {
   async login(req, res, params, ctx) {
     const {email, password} = ctx.body
-    try {
-      const selectQuery = `SELECT * FROM users WHERE email = $1`;
-      const result = await db.query(selectQuery, [email]);
+    const selectQuery = `SELECT * FROM users WHERE email = $1`;
+    const result = await db.query(selectQuery, [email]);
 
-      if (result.rows.length === 0) throw new UnauthorizedError('Wrong email or password!');
-      const storedHash = result.rows[0].password;
-      const matched = await verifyPassword(password, storedHash)
-      if (!matched) throw new UnauthorizedError('Wrong email or password!')
+    if (result.rows.length === 0) throw new UnauthorizedError('Wrong email or password!');
+    const storedHash = result.rows[0].password;
+    const matched = await verifyPassword(password, storedHash)
+    if (!matched) throw new UnauthorizedError('Wrong email or password!')
 
-      const loadedUser = result.rows[0]
-      const payload = {id: loadedUser.id, role: loadedUser.role}
-      const token = generateToken(payload, process.env.JWT_TOKEN_SECRET);
+    const loadedUser = result.rows[0]
+    const payload = {id: loadedUser.id, role: loadedUser.role}
+    const token = generateToken(payload, process.env.JWT_TOKEN_SECRET);
 
-      res.writeHead(201)
-      res.end(JSON.stringify({
-        token,
-        user: {
-          id: loadedUser.id,
-          name: loadedUser.name,
-          email: loadedUser.email,
-          role: loadedUser.role,
-          createdAt: loadedUser.created_at
-        }
-      }))
-
-    } catch (error) {
-      throw error
-    }
+    res.writeHead(201)
+    res.end(JSON.stringify({
+      token,
+      user: {
+        id: loadedUser.id,
+        name: loadedUser.name,
+        email: loadedUser.email,
+        role: loadedUser.role,
+        createdAt: loadedUser.created_at
+      }
+    }))
   },
 
   async register(req, res, params, ctx) {
