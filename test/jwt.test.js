@@ -3,7 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const crypto = require('node:crypto');
-const {generateToken} = require('../src/utils/jwt');
+const {generateToken, verifyToken} = require('../src/utils/jwt');
 
 test('Native JWT Generator Module', async (t) => {
   const secret = 'super_secret_test_key_123';
@@ -64,4 +64,54 @@ test('Native JWT Generator Module', async (t) => {
     const expectedSignatureEncoded = expectedSignatureBuffer.toString('base64url');
     assert.strictEqual(encodedSignature, expectedSignatureEncoded);
   });
+
+
+  await t.test('should successfully decode and verify a valid token', () => {
+    const token = generateToken(payload, secret, 3600);
+    const decoded = verifyToken(token, secret);
+
+    assert.notStrictEqual(decoded, null);
+    assert.strictEqual(decoded.id, 1);
+    assert.strictEqual(decoded.role, 'customer');
+    assert.ok(typeof decoded.exp === 'number');
+  });
+
+  await t.test('should return null if the signature has been tampered with', () => {
+    const token = generateToken(payload, secret);
+
+    const parts = token.split('.');
+    const lastChar = parts[2].slice(-1);
+    const newChar = lastChar === 'A' ? 'B' : 'A';
+    parts[2] = parts[2].slice(0, -1) + newChar;
+
+    const tamperedToken = parts.join('.');
+    const decoded = verifyToken(tamperedToken, secret);
+
+    assert.strictEqual(decoded, null);
+  });
+
+  await t.test('should return null if a wrong secret key is used', () => {
+    const token = generateToken(payload, secret);
+    const wrongSecret = 'another_completely_different_secret_key';
+
+    const decoded = verifyToken(token, wrongSecret);
+
+    assert.strictEqual(decoded, null);
+  });
+
+  await t.test('should return null if the token has expired', () => {
+    const expiredToken = generateToken(payload, secret, -10);
+
+    const decoded = verifyToken(expiredToken, secret);
+
+    assert.strictEqual(decoded, null);
+  });
+
+  await t.test('should handle completely malformed token strings without throwing errors', () => {
+    assert.strictEqual(verifyToken('not-even-a-jwt', secret), null);
+    assert.strictEqual(verifyToken('invalid.token.structure.with.too.many.dots', secret), null);
+    assert.strictEqual(verifyToken('', secret), null);
+    assert.strictEqual(verifyToken(null, secret), null);
+  });
+
 })

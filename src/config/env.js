@@ -5,8 +5,7 @@ const path = require('node:path');
 
 const loadEnv = (customPath = null) => {
   try {
-    const envPath = customPath || path.resolve(process.cwd(), '.env');
-
+    const envPath = customPath || path.resolve(process.cwd() + '/src/', '.env');
     if (!fs.existsSync(envPath)) return;
 
     const envContent = fs.readFileSync(envPath, 'utf-8');

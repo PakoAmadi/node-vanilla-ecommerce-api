@@ -5,7 +5,6 @@ const router = require('./routes/routes');
 const RouterDispatcher = require('./router/router.dispatcher');
 const db = require('./database/db');
 
-
 const PORT = process.env.PORT || 5000;
 const dispatcher = new RouterDispatcher(router)
 

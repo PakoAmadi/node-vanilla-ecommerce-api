@@ -10,11 +10,12 @@ module.exports = async (req, res, params, ctx) => {
   }
 
   const [bearer, token] = authHeader.split(' ');
+
   if (bearer !== 'Bearer' || !token) {
     throw new UnauthorizedError('Invalid authorization format');
   }
 
-  const decodedUser = verifyToken(token, process.env.JWT_SECRET || 'super_secret_key');
+  const decodedUser = verifyToken(token, process.env.JWT_TOKEN_SECRET || 'super_secret_key');
   if (!decodedUser) {
     throw new UnauthorizedError('Invalid or expired token');
   }
