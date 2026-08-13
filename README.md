@@ -13,6 +13,9 @@ A high-performance, enterprise-grade E-commerce RESTful API built entirely from 
   * Linear password salting and hashing utilizing native `node:crypto.scrypt`.
   * Complete protection against Timing Attacks via constant-time buffer comparison (`crypto.timingSafeEqual`).
   * Purely handwritten JWT Generator & Validator compliant with the RFC 7519 security specifications utilizing `base64url` native binary transitions.
+* **ACID-Compliant Order Checkout Engine**: Implements a bulletproof transaction system inside a single PostgreSQL connection pipeline. If any product inventory check fails, the entire operational block triggers a strict `ROLLBACK` to preserve data consistency.
+* **Race Condition Mitigation (`FOR UPDATE`)**: Utilizes pessimistic row-level locking via PostgreSQL `FOR UPDATE OF` macros during inventory evaluation blocks. This safely queues concurrent purchase requests and eliminates double-spending vulnerabilities (e.g., overselling a single stock entity to parallel client streams).
+* **Native Database JSON Aggregation**: Leverages PostgreSQL `json_agg` and `json_build_object` functions within history lookup queries. This offloads relational mapping and arrays reconstruction payloads from the Node.js process layer directly onto the indexed database engine, minimizing Garbage Collector allocation cycles.
 
 ## 🛠️ Tech Stack
 
@@ -95,3 +98,7 @@ npm test
 * `GET /api/cart` — Aggregates authenticated user items matching PostgreSQL relational references and tallies costs live via JOIN queries.
 * `POST /api/cart` — Executes an atomic SQL `UPSERT` operation adding an item or mutating rows quantity safely.
 * `DELETE /api/cart/:productId` — Removes items allocation from active user cart.
+
+### Orders & Checkout Context (Protected via Functional Pipe)
+* `POST /api/orders` — Atomically processes current user cart metrics, validates strict inventory bounds, performs stock ledger deductions, logs historic unit pricing snapshots, and purges the active cart entity within an isolated ACID block.
+* `GET /api/orders` — Pulls aggregated user purchases records mapped as nested native JSON datasets directly returned from the SQL database cluster.
