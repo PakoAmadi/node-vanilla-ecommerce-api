@@ -6,23 +6,22 @@ const { NotFoundError, HttpError, ConflictError} = require('../errors/errors');
 
 const productHandler = {
   async deleteOne(req, res, params, ctx) {
-    try {
       const productId = params.id;
-      await db.query(`DELETE FROM products WHERE id = $1`, [productId]);
+      const result = await db.query(`DELETE FROM products WHERE id = $1`, [productId]);
+      if (result.rowCount === 0) throw new NotFoundError(`Product with ID ${productId} not found`);
       res.writeHead(200);
       res.end(JSON.stringify({message: 'Product deleted successfully!'}))
-    } catch (error) {
-      throw new HttpError('Something went wrong!')
-    }
   },
   async updateOne(req, res, params, ctx) {
     try {
       const productId = params.id;
       const {title, description, price, stock} = ctx.body
       const result = await db.query(
-        'UPDATE products SET title = $1, description = $2, price = $2, stock = $4 WHERE id = $5',
+        'UPDATE products SET title = $1, description = $2, price = $3, stock = $4 WHERE id = $5 RETURNING *',
         [title, description, price, stock, productId]
       );
+
+      if (result.rowCount === 0) throw new NotFoundError(`Product with ID ${productId} not found`);
       const updatedProduct = result.rows[0];
       res.writeHead(200);
       res.end(JSON.stringify({
@@ -64,7 +63,8 @@ const productHandler = {
   async createOne(req, res, params, ctx) {
     try {
       const {title, description, price, stock} = ctx.body;
-      const result = db.query(`INSERT INTO products (title, description, price, stock) VALUES ($1, $2, $3, $4)`, [title, description, price, stock]);
+      const result = await db.query(`INSERT INTO products (title, description, price, stock) VALUES ($1, $2, $3, $4) RETURNING *`,
+        [title, description, price, stock]) ;
       const newProduct = result.rows[0];
       res.writeHead(201);
       res.end(JSON.stringify({
