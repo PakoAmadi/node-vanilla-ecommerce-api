@@ -52,6 +52,13 @@ class UnauthorizedError extends HttpError {
   }
 }
 
+class ForbiddenError extends HttpError {
+  constructor(message = 'Forbidden') {
+    super(message, 403); // 403 Forbidden
+  }
+}
+
+
 module.exports = {
   HttpError,
   PayloadTooLargeError,
@@ -59,6 +66,7 @@ module.exports = {
   NotFoundError,
   MethodNotAllowedError,
   ConflictError,
-  UnauthorizedError
+  UnauthorizedError,
+  ForbiddenError
 };
 
