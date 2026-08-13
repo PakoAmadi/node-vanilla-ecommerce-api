@@ -67,6 +67,33 @@ class Database {
     await this.pool.query(createProductsTableQuery);
     await this.pool.query('CREATE INDEX IF NOT EXISTS idx_products_title ON products(title);');
 
+    const createCartsTableQuery = `
+            CREATE TABLE IF NOT EXISTS carts (
+                id SERIAL PRIMARY KEY,
+                user_id INT UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+            );
+        `;
+
+    const createCartItemsTableQuery = `
+            CREATE TABLE IF NOT EXISTS cart_items (
+                id SERIAL PRIMARY KEY,
+                cart_id INT NOT NULL REFERENCES carts(id) ON DELETE CASCADE,
+                product_id INT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+                quantity INT NOT NULL CHECK (quantity > 0),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                -- Защита на уровне БД: один и тот же товар не может дублироваться строками, только увеличиваться в количестве
+                CONSTRAINT uk_cart_product UNIQUE (cart_id, product_id)
+            );
+        `;
+
+    await this.pool.query(createCartsTableQuery);
+    await this.pool.query(createCartItemsTableQuery);
+
+    await this.pool.query('CREATE INDEX IF NOT EXISTS idx_carts_user ON carts(user_id);');
+    await this.pool.query('CREATE INDEX IF NOT EXISTS idx_cart_items_cart ON cart_items(cart_id);');
+
     console.log('[DATABASE]: Database schema and indexes verified.');
   }
 
