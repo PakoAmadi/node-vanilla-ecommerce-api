@@ -5,6 +5,7 @@ const authHandler = require('../handlers/authHandler');
 const userHandler = require('../handlers/userHandler');
 const productHandler = require('../handlers/productHandler');
 const cartHandler = require('../handlers/cartHandler');
+const orderHandler = require('../handlers/orderHandler')
 
 const sanitizeRegistrationData = require('../utils/sanitizers/sanitizeRegistrationData');
 const sanitizeCartData = require('../utils/sanitizers/sanitizeCartData')
@@ -28,5 +29,7 @@ router.delete('/api/products/:id', pipe(authStage, productHandler.deleteOne));
 router.get('/api/cart', pipe(authStage, cartHandler.getCart));
 router.post('/api/cart', pipe(authStage, validationStage({ sanitize: sanitizeCartData, validate: validateCartInput}), cartHandler.addItem));
 router.delete('/api/cart/:productId', pipe(authStage, cartHandler.removeItem));
+router.post('/api/orders', pipe(authStage, orderHandler.checkout));
+router.get('/api/orders', pipe(authStage, orderHandler.getHistory));
 
 module.exports = router;

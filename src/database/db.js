@@ -83,7 +83,7 @@ class Database {
                 product_id INT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
                 quantity INT NOT NULL CHECK (quantity > 0),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                -- Защита на уровне БД: один и тот же товар не может дублироваться строками, только увеличиваться в количестве
+                -- Database-level protection: The same product cannot be duplicated across rows; only the quantity can be increased
                 CONSTRAINT uk_cart_product UNIQUE (cart_id, product_id)
             );
         `;
@@ -93,6 +93,33 @@ class Database {
 
     await this.pool.query('CREATE INDEX IF NOT EXISTS idx_carts_user ON carts(user_id);');
     await this.pool.query('CREATE INDEX IF NOT EXISTS idx_cart_items_cart ON cart_items(cart_id);');
+
+    const createOrdersTableQuery = `
+            CREATE TABLE IF NOT EXISTS orders (
+                id SERIAL PRIMARY KEY,
+                user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                total_price NUMERIC(10, 2) NOT NULL CHECK (total_price >= 0),
+                status VARCHAR(50) DEFAULT 'pending' NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+            );
+        `;
+
+    const createOrderItemsTableQuery = `
+            CREATE TABLE IF NOT EXISTS order_items (
+                id SERIAL PRIMARY KEY,
+                order_id INT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+                product_id INT REFERENCES products(id) ON DELETE SET NULL, -- если товар удалят из каталога, заказ останется
+                title VARCHAR(255) NOT NULL, -- фиксируем название на момент покупки
+                price NUMERIC(10, 2) NOT NULL CHECK (price >= 0), -- фиксируем цену на момент покупки!
+                quantity INT NOT NULL CHECK (quantity > 0)
+            );
+        `;
+
+    await this.pool.query(createOrdersTableQuery);
+    await this.pool.query(createOrderItemsTableQuery);
+
+    await this.pool.query('CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);');
+    await this.pool.query('CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);');
 
     console.log('[DATABASE]: Database schema and indexes verified.');
   }
