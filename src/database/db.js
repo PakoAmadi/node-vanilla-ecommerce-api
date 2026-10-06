@@ -39,6 +39,15 @@ class Database {
     return this.pool.query(text, params);
   }
 
+  // Dedicated connection for transactions (BEGIN/COMMIT must share one session).
+  // The caller is responsible for client.release().
+  async getClient() {
+    if (!this.pool) {
+      throw new Error('Database not initialized. Call connect() first.');
+    }
+    return this.pool.connect();
+  }
+
   async #initializeSchema() {
     const createUsersTableQuery = `
             CREATE TABLE IF NOT EXISTS users (

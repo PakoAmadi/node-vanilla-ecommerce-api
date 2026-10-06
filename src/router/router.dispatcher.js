@@ -1,6 +1,7 @@
 'use strict'
 
-const {HttpError, MethodNotAllowedError, NotFoundError} = require("../errors/errors");
+const {MethodNotAllowedError, NotFoundError} = require("../errors/errors");
+const {mapError} = require('../interfaces/http/errorMapper');
 
 module.exports = class RouterDispatcher {
   constructor(router) {
@@ -27,9 +28,10 @@ module.exports = class RouterDispatcher {
   }
 
   #handleError(res, error) {
-    if (error instanceof HttpError) {
-      res.writeHead(error.statusCode);
-      return res.end(JSON.stringify({error: error.message}));
+    const mapped = mapError(error);
+    if (mapped) {
+      res.writeHead(mapped.statusCode);
+      return res.end(JSON.stringify({error: mapped.message}));
     }
 
     console.error('[CRITICAL SERVER ERROR]:', error.stack);
