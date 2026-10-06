@@ -1,12 +1,24 @@
 'use strict';
 
 const {HttpError} = require('../../errors/errors');
-const {DomainError, EmptyCartError, InsufficientStockError} = require('../../domain/errors');
+const {
+  DomainError,
+  EmptyCartError,
+  InsufficientStockError,
+  InvalidProductIdError,
+  InvalidQuantityError,
+  ProductNotFoundError,
+  CartItemNotFoundError
+} = require('../../domain/errors');
 
-// Domain error class -> HTTP status. 400 keeps the existing API contract.
+// Domain error class -> HTTP status. Values keep the existing API contract.
 const STATUS_BY_DOMAIN_ERROR = new Map([
   [EmptyCartError, 400],
-  [InsufficientStockError, 400]
+  [InsufficientStockError, 400],
+  [InvalidProductIdError, 400],
+  [InvalidQuantityError, 400],
+  [ProductNotFoundError, 404],
+  [CartItemNotFoundError, 404]
 ]);
 
 const DEFAULT_DOMAIN_STATUS = 400;

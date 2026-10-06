@@ -8,7 +8,7 @@ const PgOrderRepository = require('./repositories/PgOrderRepository');
  * Runs a unit of work inside ONE dedicated connection, so BEGIN / FOR UPDATE /
  * COMMIT / ROLLBACK all happen on the same session.
  *
- * @implements {import('../../application/orders/ports').UnitOfWork}
+ * Implements UnitOfWork from application/orders/ports.js (shared by orders and cart).
  */
 class PgUnitOfWork {
   /** @param {{getClient: () => Promise<import('pg').PoolClient>}} db */

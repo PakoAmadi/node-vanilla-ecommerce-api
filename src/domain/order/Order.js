@@ -1,11 +1,9 @@
 'use strict';
 
 const {EmptyCartError, InsufficientStockError} = require('../errors');
+const {toCents, fromCents} = require('../money');
 
 const DEFAULT_STATUS = 'paid';
-
-// Prices are summed in cents to avoid floating point drift (0.1 + 0.2 !== 0.3)
-const toCents = (price) => Math.round(Number(price) * 100);
 
 class Order {
   /**
@@ -54,7 +52,7 @@ class Order {
       };
     });
 
-    return new Order({userId, items, totalPrice: totalCents / 100, status: DEFAULT_STATUS});
+    return new Order({userId, items, totalPrice: fromCents(totalCents), status: DEFAULT_STATUS});
   }
 
   // Returns a copy enriched with data assigned by persistence (id, createdAt)

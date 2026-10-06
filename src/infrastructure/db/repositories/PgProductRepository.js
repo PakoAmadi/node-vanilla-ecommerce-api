@@ -5,12 +5,17 @@ const {InsufficientStockError} = require('../../../domain/errors');
 const PG_CHECK_VIOLATION = '23514';
 
 /**
- * @implements {import('../../../application/orders/ports').ProductRepository}
+ * Implements ProductRepository from application/orders/ports.js and application/cart/ports.js
  */
 class PgProductRepository {
   /** @param {{query: Function}} executor */
   constructor(executor) {
     this.executor = executor;
+  }
+
+  async findStockById(productId) {
+    const {rows} = await this.executor.query('SELECT stock FROM products WHERE id = $1', [productId]);
+    return rows.length ? rows[0].stock : null;
   }
 
   async decreaseStock(items) {

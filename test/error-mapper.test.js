@@ -5,7 +5,10 @@ const assert = require('node:assert');
 const {mapError} = require('../src/interfaces/http/errorMapper');
 const RouterDispatcher = require('../src/router/router.dispatcher');
 const {ConflictError} = require('../src/errors/errors');
-const {DomainError, EmptyCartError, InsufficientStockError} = require('../src/domain/errors');
+const {
+  DomainError, EmptyCartError, InsufficientStockError, InvalidProductIdError,
+  InvalidQuantityError, ProductNotFoundError, CartItemNotFoundError
+} = require('../src/domain/errors');
 
 test('HTTP error mapper', async (t) => {
   await t.test('should keep HttpError status codes', () => {
@@ -15,7 +18,14 @@ test('HTTP error mapper', async (t) => {
   await t.test('should map domain errors to 400', () => {
     assert.strictEqual(mapError(new EmptyCartError()).statusCode, 400);
     assert.strictEqual(mapError(new InsufficientStockError()).statusCode, 400);
+    assert.strictEqual(mapError(new InvalidProductIdError()).statusCode, 400);
+    assert.strictEqual(mapError(new InvalidQuantityError()).statusCode, 400);
     assert.strictEqual(mapError(new DomainError('any rule')).statusCode, 400);
+  });
+
+  await t.test('should map "not found" domain errors to 404', () => {
+    assert.strictEqual(mapError(new ProductNotFoundError()).statusCode, 404);
+    assert.strictEqual(mapError(new CartItemNotFoundError()).statusCode, 404);
   });
 
   await t.test('should return null for unexpected errors', () => {

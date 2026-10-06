@@ -26,4 +26,36 @@ class InsufficientStockError extends DomainError {
   }
 }
 
-module.exports = {DomainError, EmptyCartError, InsufficientStockError};
+class ProductNotFoundError extends DomainError {
+  constructor(message = 'Product not found') {
+    super(message);
+  }
+}
+
+class CartItemNotFoundError extends DomainError {
+  constructor(message = 'Product not found in your cart') {
+    super(message);
+  }
+}
+
+class InvalidProductIdError extends DomainError {
+  constructor(message = 'Valid Product ID is required') {
+    super(message);
+  }
+}
+
+class InvalidQuantityError extends DomainError {
+  constructor(message = 'Quantity must be a positive integer greater than 0') {
+    super(message);
+  }
+}
+
+module.exports = {
+  DomainError,
+  InvalidQuantityError,
+  EmptyCartError,
+  InsufficientStockError,
+  ProductNotFoundError,
+  CartItemNotFoundError,
+  InvalidProductIdError
+};
