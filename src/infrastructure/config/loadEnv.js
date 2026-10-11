@@ -3,10 +3,16 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+// Default locations, first existing wins: project root (documented), then src/ (legacy)
+const DEFAULT_PATHS = () => [
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(process.cwd(), 'src', '.env')
+];
+
 const loadEnv = (customPath = null) => {
   try {
-    const envPath = customPath || path.resolve(process.cwd() + '/src/', '.env');
-    if (!fs.existsSync(envPath)) return;
+    const envPath = customPath || DEFAULT_PATHS().find((p) => fs.existsSync(p));
+    if (!envPath || !fs.existsSync(envPath)) return;
 
     const envContent = fs.readFileSync(envPath, 'utf-8');
     const lines = envContent.split(/\r?\n/);
