@@ -31,13 +31,11 @@ module.exports = class RouterDispatcher {
     const mapped = mapError(error);
     if (mapped) {
       res.writeHead(mapped.statusCode);
-      const body = {error: mapped.message};
-      if (mapped.details) body.details = mapped.details;
-      return res.end(JSON.stringify(body));
+      return res.end(JSON.stringify(mapped.body));
     }
 
     console.error('[CRITICAL SERVER ERROR]:', error.stack);
     res.writeHead(500);
-    res.end(JSON.stringify({error: 'Internal Server Error'}));
+    res.end(JSON.stringify({error: 'Internal Server Error', code: 'INTERNAL_ERROR'}));
   }
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-const {BadRequestError} = require('../errors')
+const {ValidationError} = require('../errors')
 
 const {EMAIL_REGEX} = require('./constants')
 
@@ -21,7 +21,7 @@ const validateRegistration = (data) => {
   }
 
   if (Object.keys(errors).length > 0) {
-    throw new BadRequestError(JSON.stringify({validationErrors: errors}));
+    throw new ValidationError(errors);
   }
 };
 

@@ -1,4 +1,4 @@
-const {BadRequestError} = require("../errors");
+const {ValidationError} = require("../errors");
 
 const validateCartInput = (data) => {
   const { productId, quantity } = data;
@@ -13,7 +13,7 @@ const validateCartInput = (data) => {
   }
 
   if (Object.keys(errors).length > 0) {
-    throw new BadRequestError(JSON.stringify({ validationErrors: errors }));
+    throw new ValidationError(errors);
   }
 };
 
