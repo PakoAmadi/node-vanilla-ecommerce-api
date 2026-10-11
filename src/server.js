@@ -1,51 +1,61 @@
-const http = require('node:http')
+'use strict';
+
+const http = require('node:http');
 const loadEnv = require('./infrastructure/config/loadEnv');
-loadEnv()
-const router = require('./interfaces/http/routes');
-const RouterDispatcher = require('./interfaces/http/router/RouterDispatcher');
+loadEnv();
+
+const {loadConfig} = require('./infrastructure/config/config');
 const db = require('./infrastructure/db/db');
+const createContainer = require('./container');
+const RouterDispatcher = require('./interfaces/http/router/RouterDispatcher');
 
-const PORT = process.env.PORT || 5000;
-const dispatcher = new RouterDispatcher(router)
-
-const server = http.createServer(async (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  await dispatcher.dispatch(req, res);
-})
+const SHUTDOWN_TIMEOUT_MS = 10000;
 
 const bootstrap = async () => {
+  let server;
+
   try {
+    const config = loadConfig();
+    const {router} = createContainer({db, config});
+    const dispatcher = new RouterDispatcher(router);
+
+    server = http.createServer(async (req, res) => {
+      res.setHeader('Content-Type', 'application/json');
+      await dispatcher.dispatch(req, res);
+    });
+
     await db.connect();
-    server.listen(PORT, () => {
-      console.log(`[SERVER]: Running on port ${PORT}`);
+    server.listen(config.port, () => {
+      console.log(`[SERVER]: Running on port ${config.port}`);
     });
   } catch (error) {
     console.error('[CRITICAL BOOTSTRAP ERROR]:', error.message);
     process.exit(1);
   }
-}
 
-const gracefulShutdown = async (signal) => {
-  console.log(`\n[SERVER]: Received ${signal}. Starting graceful shutdown...`);
+  const gracefulShutdown = (signal) => {
+    console.log(`\n[SERVER]: Received ${signal}. Starting graceful shutdown...`);
 
-  server.close(async () => {
-    console.log('[SERVER]: HTTP server closed.');
-    try {
-      await db.disconnect();
-      console.log('[SERVER]: Graceful shutdown complete. Exiting process.');
-      process.exit(0);
-    } catch (error) {
-      console.error('[SERVER ERROR]: Error during disconnect:', error.message);
+    server.close(async () => {
+      console.log('[SERVER]: HTTP server closed.');
+      try {
+        await db.disconnect();
+        console.log('[SERVER]: Graceful shutdown complete. Exiting process.');
+        process.exit(0);
+      } catch (error) {
+        console.error('[SERVER ERROR]: Error during disconnect:', error.message);
+        process.exit(1);
+      }
+    });
+
+    setTimeout(() => {
+      console.error('[SERVER ERROR]: Forcefully shutting down due to timeout.');
       process.exit(1);
-    }
-  })
-  setTimeout(() => {
-    console.error('[SERVER ERROR]: Forcefully shutting down due to timeout.');
-    process.exit(1);
-  }, 10000);
-}
+    }, SHUTDOWN_TIMEOUT_MS).unref();
+  };
 
-bootstrap()
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+};
 
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+bootstrap();

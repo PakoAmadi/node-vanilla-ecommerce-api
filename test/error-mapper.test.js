@@ -7,7 +7,9 @@ const RouterDispatcher = require('../src/interfaces/http/router/RouterDispatcher
 const {ConflictError} = require('../src/interfaces/http/errors');
 const {
   DomainError, EmptyCartError, InsufficientStockError, InvalidProductIdError,
-  InvalidQuantityError, ProductNotFoundError, CartItemNotFoundError
+  InvalidQuantityError, ProductNotFoundError, CartItemNotFoundError,
+  ProductTitleTakenError, InvalidProductError, EmailAlreadyTakenError,
+  InvalidCredentialsError, UserNotFoundError
 } = require('../src/domain/errors');
 
 test('HTTP error mapper', async (t) => {
@@ -26,6 +28,19 @@ test('HTTP error mapper', async (t) => {
   await t.test('should map "not found" domain errors to 404', () => {
     assert.strictEqual(mapError(new ProductNotFoundError()).statusCode, 404);
     assert.strictEqual(mapError(new CartItemNotFoundError()).statusCode, 404);
+    assert.strictEqual(mapError(new UserNotFoundError()).statusCode, 404);
+  });
+
+  await t.test('should map conflicts to 409 and bad credentials to 401', () => {
+    assert.strictEqual(mapError(new ProductTitleTakenError()).statusCode, 409);
+    assert.strictEqual(mapError(new EmailAlreadyTakenError()).statusCode, 409);
+    assert.strictEqual(mapError(new InvalidCredentialsError()).statusCode, 401);
+  });
+
+  await t.test('should pass validation details through', () => {
+    const mapped = mapError(new InvalidProductError({price: 'bad'}));
+    assert.strictEqual(mapped.statusCode, 400);
+    assert.deepStrictEqual(mapped.details, {price: 'bad'});
   });
 
   await t.test('should return null for unexpected errors', () => {

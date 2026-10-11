@@ -6,7 +6,6 @@ require('../src/infrastructure/config/loadEnv')();
 const db = require('../src/infrastructure/db/db');
 const createContainer = require('../src/container');
 const RouterDispatcher = require('../src/interfaces/http/router/RouterDispatcher');
-const {generateToken} = require('../src/infrastructure/security/jwt');
 const {ProductNotFoundError, ProductTitleTakenError, InvalidProductError} = require('../src/domain/errors');
 
 /**
@@ -16,6 +15,7 @@ const {ProductNotFoundError, ProductTitleTakenError, InvalidProductError} = requ
 test('Products Integration Suite (PostgreSQL)', async (t) => {
   const suffix = `${process.pid}_${Date.now()}`;
   const title = (label) => `${label} ${suffix}`;
+  let container;
   let product; // container.controllers.product
 
   const createMockResponse = () => ({
@@ -28,7 +28,8 @@ test('Products Integration Suite (PostgreSQL)', async (t) => {
 
   t.before(async () => {
     await db.connect();
-    product = createContainer({db}).controllers.product;
+    container = createContainer({db});
+    product = container.controllers.product;
   });
 
   t.after(async () => {
@@ -127,11 +128,9 @@ test('Products Integration Suite (PostgreSQL)', async (t) => {
   });
 
   await t.test('HTTP: full CRUD through router, admin guard and validation stage', async () => {
-    const router = require('../src/interfaces/http/routes');
-    const dispatcher = new RouterDispatcher(router);
-    const secret = process.env.JWT_TOKEN_SECRET || 'super_secret_key';
-    const adminToken = generateToken({id: 1, role: 'admin'}, secret);
-    const customerToken = generateToken({id: 2, role: 'customer'}, secret);
+    const dispatcher = new RouterDispatcher(container.router);
+    const adminToken = container.services.tokens.issue({id: 1, role: 'admin'});
+    const customerToken = container.services.tokens.issue({id: 2, role: 'customer'});
 
     const call = async (method, url, {token, body} = {}) => {
       const payload = body === undefined ? [] : [Buffer.from(JSON.stringify(body))];

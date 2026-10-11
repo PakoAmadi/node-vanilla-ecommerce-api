@@ -62,6 +62,25 @@ class InvalidProductIdError extends DomainError {
   }
 }
 
+class EmailAlreadyTakenError extends DomainError {
+  constructor(message = 'User with this email already exists') {
+    super(message);
+  }
+}
+
+// Deliberately does not say whether the email or the password was wrong
+class InvalidCredentialsError extends DomainError {
+  constructor(message = 'Wrong email or password!') {
+    super(message);
+  }
+}
+
+class UserNotFoundError extends DomainError {
+  constructor(message = 'User not found') {
+    super(message);
+  }
+}
+
 class InvalidQuantityError extends DomainError {
   constructor(message = 'Quantity must be a positive integer greater than 0') {
     super(message);
@@ -70,6 +89,9 @@ class InvalidQuantityError extends DomainError {
 
 module.exports = {
   DomainError,
+  EmailAlreadyTakenError,
+  InvalidCredentialsError,
+  UserNotFoundError,
   InvalidQuantityError,
   EmptyCartError,
   InsufficientStockError,

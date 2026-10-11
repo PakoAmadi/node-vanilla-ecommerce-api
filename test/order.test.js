@@ -7,7 +7,6 @@ require('../src/infrastructure/config/loadEnv')();
 const db = require('../src/infrastructure/db/db');
 const createContainer = require('../src/container');
 const RouterDispatcher = require('../src/interfaces/http/router/RouterDispatcher');
-const {generateToken} = require('../src/infrastructure/security/jwt');
 const {EmptyCartError, InsufficientStockError} = require('../src/domain/errors');
 
 /**
@@ -205,13 +204,11 @@ test('Orders Integration Suite (PostgreSQL)', async (t) => {
   });
 
   await t.test('HTTP: POST /api/orders through router + authStage returns 201, then 400 on empty cart', async () => {
-    // routes.js builds its own container on the shared db singleton (Composition Root)
-    const router = require('../src/interfaces/http/routes');
-    const dispatcher = new RouterDispatcher(router);
+    const dispatcher = new RouterDispatcher(container.router);
     const user = await seedUser('http');
     const productId = await seedProduct('HTTP Book', 12.50, 3);
     await fillCart(user.id, [{productId, quantity: 2}]);
-    const token = generateToken({id: user.id, role: user.role}, process.env.JWT_TOKEN_SECRET || 'super_secret_key');
+    const token = container.services.tokens.issue({id: user.id, role: user.role});
     const request = () => ({url: '/api/orders', method: 'POST', headers: {authorization: `Bearer ${token}`}});
 
     const first = createMockResponse();

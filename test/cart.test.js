@@ -6,7 +6,6 @@ require('../src/infrastructure/config/loadEnv')();
 const db = require('../src/infrastructure/db/db');
 const createContainer = require('../src/container');
 const RouterDispatcher = require('../src/interfaces/http/router/RouterDispatcher');
-const {generateToken} = require('../src/infrastructure/security/jwt');
 const {
   ProductNotFoundError, InsufficientStockError, CartItemNotFoundError
 } = require('../src/domain/errors');
@@ -20,6 +19,7 @@ test('Cart Integration Suite (PostgreSQL)', async (t) => {
   const suffix = `${process.pid}_${Date.now()}`;
   const createdUserIds = [];
   const createdProductIds = [];
+  let container;
   let cart; // container.controllers.cart
 
   const createMockResponse = () => ({
@@ -62,7 +62,8 @@ test('Cart Integration Suite (PostgreSQL)', async (t) => {
 
   t.before(async () => {
     await db.connect();
-    cart = createContainer({db}).controllers.cart;
+    container = createContainer({db});
+    cart = container.controllers.cart;
   });
 
   t.after(async () => {
@@ -209,11 +210,10 @@ test('Cart Integration Suite (PostgreSQL)', async (t) => {
   });
 
   await t.test('HTTP: /api/cart through router, stages and error mapper', async () => {
-    const router = require('../src/interfaces/http/routes');
-    const dispatcher = new RouterDispatcher(router);
+    const dispatcher = new RouterDispatcher(container.router);
     const user = await seedUser('http');
     const productId = await seedProduct('HTTP Cart Book', 12.50, 3);
-    const token = generateToken({id: user.id, role: user.role}, process.env.JWT_TOKEN_SECRET || 'super_secret_key');
+    const token = container.services.tokens.issue({id: user.id, role: user.role});
     const auth = {authorization: `Bearer ${token}`};
 
     // body is read by validationStage from the request stream

@@ -3,6 +3,9 @@
 const {HttpError} = require('./errors');
 const {
   DomainError,
+  EmailAlreadyTakenError,
+  InvalidCredentialsError,
+  UserNotFoundError,
   EmptyCartError,
   InsufficientStockError,
   InvalidProductIdError,
@@ -15,6 +18,9 @@ const {
 
 // Domain error class -> HTTP status. Values keep the existing API contract.
 const STATUS_BY_DOMAIN_ERROR = new Map([
+  [EmailAlreadyTakenError, 409],
+  [InvalidCredentialsError, 401],
+  [UserNotFoundError, 404],
   [EmptyCartError, 400],
   [InsufficientStockError, 400],
   [InvalidProductIdError, 400],
