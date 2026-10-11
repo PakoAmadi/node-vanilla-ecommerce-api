@@ -3,11 +3,11 @@
 const test = require('node:test');
 const assert = require('node:assert');
 // Load environment variables before initializing the database connection pool
-require('../src/config/env')();
-const db = require('../src/database/db');
+require('../src/infrastructure/config/loadEnv')();
+const db = require('../src/infrastructure/db/db');
 const createContainer = require('../src/container');
-const RouterDispatcher = require('../src/router/router.dispatcher');
-const {generateToken} = require('../src/utils/jwt');
+const RouterDispatcher = require('../src/interfaces/http/router/RouterDispatcher');
+const {generateToken} = require('../src/infrastructure/security/jwt');
 const {EmptyCartError, InsufficientStockError} = require('../src/domain/errors');
 
 /**
@@ -206,7 +206,7 @@ test('Orders Integration Suite (PostgreSQL)', async (t) => {
 
   await t.test('HTTP: POST /api/orders through router + authStage returns 201, then 400 on empty cart', async () => {
     // routes.js builds its own container on the shared db singleton (Composition Root)
-    const router = require('../src/routes/routes');
+    const router = require('../src/interfaces/http/routes');
     const dispatcher = new RouterDispatcher(router);
     const user = await seedUser('http');
     const productId = await seedProduct('HTTP Book', 12.50, 3);

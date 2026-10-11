@@ -1,9 +1,9 @@
 'use strict';
 
-const {hash, verifyPassword} = require('../utils/hash');
-const {ConflictError, UnauthorizedError} = require("../errors/errors");
-const db = require('../database/db')
-const {generateToken} = require('../utils/jwt')
+const {hash, verifyPassword} = require('../infrastructure/security/hash');
+const {ConflictError, UnauthorizedError} = require("../interfaces/http/errors");
+const db = require('../infrastructure/db/db')
+const {generateToken} = require('../infrastructure/security/jwt')
 
 const authHandler = {
   async login(req, res, params, ctx) {

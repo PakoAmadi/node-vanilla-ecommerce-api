@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-const {hash} = require('../src/utils/hash');
+const {hash} = require('../src/infrastructure/security/hash');
 
 
 test('Password Hashing Module', async (t) => {

@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-const RouterDispatcher = require('../src/router/router.dispatcher');
+const RouterDispatcher = require('../src/interfaces/http/router/RouterDispatcher');
 
 test('Router Dispatcher Module', async (t) => {
   const createMockResponse = () => {

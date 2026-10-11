@@ -3,7 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const crypto = require('node:crypto');
-const {generateToken, verifyToken} = require('../src/utils/jwt');
+const {generateToken, verifyToken} = require('../src/infrastructure/security/jwt');
 
 test('Native JWT Generator Module', async (t) => {
   const secret = 'super_secret_test_key_123';

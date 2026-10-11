@@ -1,6 +1,6 @@
 'use strict';
 
-const {BadRequestError, PayloadTooLargeError} = require("../errors/errors");
+const {BadRequestError, PayloadTooLargeError} = require("./errors");
 
 const MAX_BODY_SIZE = 1024 * 1024;
 

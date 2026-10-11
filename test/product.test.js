@@ -2,10 +2,10 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-require('../src/config/env')();
-const db = require('../src/database/db');
+require('../src/infrastructure/config/loadEnv')();
+const db = require('../src/infrastructure/db/db');
 const productHandler = require('../src/handlers/productHandler');
-const { NotFoundError, ConflictError } = require('../src/errors/errors');
+const { NotFoundError, ConflictError } = require('../src/interfaces/http/errors');
 
 test('Product CRUD Handler Integration', async (t) => {
 

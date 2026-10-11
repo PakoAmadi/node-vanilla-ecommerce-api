@@ -1,7 +1,7 @@
 'use strict'
 
-const {MethodNotAllowedError, NotFoundError} = require("../errors/errors");
-const {mapError} = require('../interfaces/http/errorMapper');
+const {MethodNotAllowedError, NotFoundError} = require("../errors");
+const {mapError} = require('../errorMapper');
 
 module.exports = class RouterDispatcher {
   constructor(router) {

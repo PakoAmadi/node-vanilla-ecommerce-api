@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-const {hash, verifyPassword} = require('../src/utils/hash');
+const {hash, verifyPassword} = require('../src/infrastructure/security/hash');
 
 test('Password Verification Module', async (t) => {
   await t.test('should return true for matching password and hash', async () => {

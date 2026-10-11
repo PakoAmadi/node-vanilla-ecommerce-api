@@ -2,9 +2,9 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-const {validateRegistration} = require('../src/utils/validators/validateRegistration');
-const sanitizeRegistrationData = require('../src/utils/sanitizers/sanitizeRegistrationData')
-const {BadRequestError} = require('../src/errors/errors');
+const {validateRegistration} = require('../src/interfaces/http/validation/validateRegistration');
+const sanitizeRegistrationData = require('../src/interfaces/http/validation/sanitizeRegistrationData')
+const {BadRequestError} = require('../src/interfaces/http/errors');
 
 test('Validation & Sanitization Module', async (t) => {
 

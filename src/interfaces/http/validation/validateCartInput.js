@@ -1,4 +1,4 @@
-const {BadRequestError} = require("../../errors/errors");
+const {BadRequestError} = require("../errors");
 
 const validateCartInput = (data) => {
   const { productId, quantity } = data;

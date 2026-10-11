@@ -1,7 +1,7 @@
 'use strict';
 
-const {verifyToken} = require('./jwt');
-const {UnauthorizedError} = require('../errors/errors');
+const {verifyToken} = require('../../../infrastructure/security/jwt');
+const {UnauthorizedError} = require('../errors');
 
 module.exports = async (req, res, params, ctx) => {
   const authHeader = req.headers['authorization'];

@@ -1,7 +1,7 @@
 'use strict';
 
-const db = require('../database/db');
-const { NotFoundError, HttpError, ConflictError} = require('../errors/errors');
+const db = require('../infrastructure/db/db');
+const { NotFoundError, HttpError, ConflictError} = require('../interfaces/http/errors');
 
 
 const productHandler = {

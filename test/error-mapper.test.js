@@ -3,8 +3,8 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const {mapError} = require('../src/interfaces/http/errorMapper');
-const RouterDispatcher = require('../src/router/router.dispatcher');
-const {ConflictError} = require('../src/errors/errors');
+const RouterDispatcher = require('../src/interfaces/http/router/RouterDispatcher');
+const {ConflictError} = require('../src/interfaces/http/errors');
 const {
   DomainError, EmptyCartError, InsufficientStockError, InvalidProductIdError,
   InvalidQuantityError, ProductNotFoundError, CartItemNotFoundError

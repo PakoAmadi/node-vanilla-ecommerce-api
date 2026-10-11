@@ -2,8 +2,8 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-const adminStage = require('../src/utils/adminStage');
-const { ForbiddenError, UnauthorizedError } = require('../src/errors/errors');
+const adminStage = require('../src/interfaces/http/stages/adminStage');
+const { ForbiddenError, UnauthorizedError } = require('../src/interfaces/http/errors');
 
 test('Admin Role Verification Stage', async (t) => {
 

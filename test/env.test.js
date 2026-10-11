@@ -5,7 +5,7 @@ const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
-const loadEnv = require('../src/config/env')
+const loadEnv = require('../src/infrastructure/config/loadEnv')
 
 test('Environment Variables Parser Module', async (t) => {
   let tmpDir;

@@ -2,11 +2,11 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-require('../src/config/env')();
-const db = require('../src/database/db');
+require('../src/infrastructure/config/loadEnv')();
+const db = require('../src/infrastructure/db/db');
 const createContainer = require('../src/container');
-const RouterDispatcher = require('../src/router/router.dispatcher');
-const {generateToken} = require('../src/utils/jwt');
+const RouterDispatcher = require('../src/interfaces/http/router/RouterDispatcher');
+const {generateToken} = require('../src/infrastructure/security/jwt');
 const {
   ProductNotFoundError, InsufficientStockError, CartItemNotFoundError
 } = require('../src/domain/errors');
@@ -209,7 +209,7 @@ test('Cart Integration Suite (PostgreSQL)', async (t) => {
   });
 
   await t.test('HTTP: /api/cart through router, stages and error mapper', async () => {
-    const router = require('../src/routes/routes');
+    const router = require('../src/interfaces/http/routes');
     const dispatcher = new RouterDispatcher(router);
     const user = await seedUser('http');
     const productId = await seedProduct('HTTP Cart Book', 12.50, 3);

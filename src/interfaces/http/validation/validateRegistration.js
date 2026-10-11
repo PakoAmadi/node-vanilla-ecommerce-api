@@ -1,15 +1,15 @@
 'use strict';
 
-const {BadRequestError} = require('../../errors/errors')
-const {EMAIL_REGEX} = require('../constants')
+const {BadRequestError} = require('../errors')
 
-const validateLogin = (data) => {
-  const {email, password} = data;
+const {EMAIL_REGEX} = require('./constants')
 
+const validateRegistration = (data) => {
+  const {name, email, password} = data;
   const errors = {};
 
-  if (!email || !password) {
-    errors.credentials = 'Email and password are required'
+  if (!name || typeof name !== 'string' || name.trim().length < 2) {
+    errors.name = 'Name must be at least 2 characters long';
   }
 
   if (!email || typeof email !== 'string' || !EMAIL_REGEX.test(email)) {
@@ -23,6 +23,8 @@ const validateLogin = (data) => {
   if (Object.keys(errors).length > 0) {
     throw new BadRequestError(JSON.stringify({validationErrors: errors}));
   }
-}
+};
 
-module.exports = {validateLogin}
+module.exports = {
+  validateRegistration
+}

@@ -1,6 +1,6 @@
 'use strict';
 
-const {HttpError} = require('../../errors/errors');
+const {HttpError} = require('./errors');
 const {
   DomainError,
   EmptyCartError,

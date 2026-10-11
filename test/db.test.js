@@ -2,9 +2,9 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-require('../src/config/env')();
+require('../src/infrastructure/config/loadEnv')();
 
-const db = require('../src/database/db');
+const db = require('../src/infrastructure/db/db');
 
 test('PostgreSQL Database Module Integration', async (t) => {
 

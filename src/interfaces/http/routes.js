@@ -1,22 +1,22 @@
 'use strict';
 
-const Router = require('../router/router');
-const authHandler = require('../handlers/authHandler');
-const userHandler = require('../handlers/userHandler');
-const productHandler = require('../handlers/productHandler');
-const db = require('../database/db');
-const createContainer = require('../container');
+const Router = require('./router/Router');
+const authHandler = require('../../handlers/authHandler');
+const userHandler = require('../../handlers/userHandler');
+const productHandler = require('../../handlers/productHandler');
+const db = require('../../infrastructure/db/db');
+const createContainer = require('../../container');
 
-const sanitizeRegistrationData = require('../utils/sanitizers/sanitizeRegistrationData');
-const sanitizeCartData = require('../utils/sanitizers/sanitizeCartData');
-const {validateRegistration} = require('../utils/validators/validateRegistration');
-const validationStage = require('../utils/validationStage');
-const authStage = require('../utils/authStage');
-const adminStage = require('../utils/adminStage');
-const pipe = require('../utils/pipe');
-const {sanitizeLoginData} = require("../utils/sanitizers/sanitizeLoginData");
-const {validateLogin} = require("../utils/validators/validateLogin");
-const validateCartInput = require('../utils/validators/validateCartInput');
+const sanitizeRegistrationData = require('./validation/sanitizeRegistrationData');
+const sanitizeCartData = require('./validation/sanitizeCartData');
+const {validateRegistration} = require('./validation/validateRegistration');
+const validationStage = require('./stages/validationStage');
+const authStage = require('./stages/authStage');
+const adminStage = require('./stages/adminStage');
+const pipe = require('./pipe');
+const {sanitizeLoginData} = require("./validation/sanitizeLoginData");
+const {validateLogin} = require("./validation/validateLogin");
+const validateCartInput = require('./validation/validateCartInput');
 
 const {controllers} = createContainer({db});
 

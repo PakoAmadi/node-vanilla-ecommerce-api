@@ -1,9 +1,9 @@
 const http = require('node:http')
-const loadEnv = require('./config/env');
+const loadEnv = require('./infrastructure/config/loadEnv');
 loadEnv()
-const router = require('./routes/routes');
-const RouterDispatcher = require('./router/router.dispatcher');
-const db = require('./database/db');
+const router = require('./interfaces/http/routes');
+const RouterDispatcher = require('./interfaces/http/router/RouterDispatcher');
+const db = require('./infrastructure/db/db');
 
 const PORT = process.env.PORT || 5000;
 const dispatcher = new RouterDispatcher(router)

@@ -1,6 +1,6 @@
 'use strict';
 
-const { ForbiddenError, UnauthorizedError } = require('../errors/errors');
+const { ForbiddenError, UnauthorizedError } = require('../errors');
 
 module.exports = async (req, res, params, ctx) => {
   if (!ctx || !ctx.user) {

@@ -1,5 +1,5 @@
 'use strict';
-const receiveArgs = require('./body');
+const receiveArgs = require('../readJsonBody');
 
 module.exports = ({sanitize, validate}) => {
   return async (req, res, params, ctx) => {
