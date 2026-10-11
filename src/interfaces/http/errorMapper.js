@@ -8,6 +8,8 @@ const {
   InvalidProductIdError,
   InvalidQuantityError,
   ProductNotFoundError,
+  ProductTitleTakenError,
+  InvalidProductError,
   CartItemNotFoundError
 } = require('../../domain/errors');
 
@@ -17,7 +19,9 @@ const STATUS_BY_DOMAIN_ERROR = new Map([
   [InsufficientStockError, 400],
   [InvalidProductIdError, 400],
   [InvalidQuantityError, 400],
+  [InvalidProductError, 400],
   [ProductNotFoundError, 404],
+  [ProductTitleTakenError, 409],
   [CartItemNotFoundError, 404]
 ]);
 
@@ -25,17 +29,19 @@ const DEFAULT_DOMAIN_STATUS = 400;
 
 /**
  * @param {Error} error
- * @returns {{statusCode:number, message:string} | null} null => unexpected error (500)
+ * @returns {{statusCode:number, message:string, details?:object} | null} null => unexpected error (500)
  */
 const mapError = (error) => {
   if (error instanceof HttpError) {
     return {statusCode: error.statusCode, message: error.message};
   }
   if (error instanceof DomainError) {
-    return {
+    const mapped = {
       statusCode: STATUS_BY_DOMAIN_ERROR.get(error.constructor) ?? DEFAULT_DOMAIN_STATUS,
       message: error.message
     };
+    if (error.details) mapped.details = error.details;
+    return mapped;
   }
   return null;
 };

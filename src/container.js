@@ -6,11 +6,14 @@
 const PgUnitOfWork = require('./infrastructure/db/PgUnitOfWork');
 const PgOrderRepository = require('./infrastructure/db/repositories/PgOrderRepository');
 const PgCartRepository = require('./infrastructure/db/repositories/PgCartRepository');
+const PgProductRepository = require('./infrastructure/db/repositories/PgProductRepository');
 const makeCheckout = require('./application/orders/checkout');
 const makeGetOrderHistory = require('./application/orders/getOrderHistory');
 const makeGetCart = require('./application/cart/getCart');
 const makeAddItemToCart = require('./application/cart/addItemToCart');
 const makeRemoveItemFromCart = require('./application/cart/removeItemFromCart');
+const makeProductUseCases = require('./application/products/productUseCases');
+const makeProductController = require('./interfaces/http/controllers/productController');
 const makeOrderController = require('./interfaces/http/controllers/orderController');
 const makeCartController = require('./interfaces/http/controllers/cartController');
 
@@ -23,6 +26,7 @@ const createContainer = ({db}) => {
   // Non-transactional repositories for single-statement operations
   const orderReadRepository = new PgOrderRepository(db);
   const cartRepository = new PgCartRepository(db);
+  const productRepository = new PgProductRepository(db);
 
   const checkout = makeCheckout({uow});
   const getOrderHistory = makeGetOrderHistory({orders: orderReadRepository});
@@ -31,9 +35,12 @@ const createContainer = ({db}) => {
   const addItemToCart = makeAddItemToCart({uow});
   const removeItemFromCart = makeRemoveItemFromCart({carts: cartRepository});
 
+  const products = makeProductUseCases({products: productRepository});
+
   return {
-    useCases: {checkout, getOrderHistory, getCart, addItemToCart, removeItemFromCart},
+    useCases: {checkout, getOrderHistory, getCart, addItemToCart, removeItemFromCart, ...products},
     controllers: {
+      product: makeProductController(products),
       order: makeOrderController({checkout, getOrderHistory}),
       cart: makeCartController({getCart, addItemToCart, removeItemFromCart})
     }

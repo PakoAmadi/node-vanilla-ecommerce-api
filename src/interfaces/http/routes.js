@@ -3,7 +3,7 @@
 const Router = require('./router/Router');
 const authHandler = require('../../handlers/authHandler');
 const userHandler = require('../../handlers/userHandler');
-const productHandler = require('../../handlers/productHandler');
+const sanitizeProductData = require('./validation/sanitizeProductData');
 const db = require('../../infrastructure/db/db');
 const createContainer = require('../../container');
 
@@ -24,11 +24,11 @@ const router = new Router();
 router.post('/api/auth/register', pipe(validationStage({ sanitize: sanitizeRegistrationData, validate: validateRegistration }), authHandler.register))
 router.post('/api/auth/login', pipe(validationStage({ sanitize: sanitizeLoginData, validate: validateLogin }), authHandler.login))
 router.get('/api/user', pipe(authStage, userHandler.getInfo))
-router.get('/api/products', pipe(productHandler.getAll));
-router.get('/api/products/:id', pipe(productHandler.getOne));
-router.post('/api/products', pipe(authStage, adminStage, productHandler.createOne));
-router.put('/api/products/:id', pipe(authStage, adminStage, productHandler.updateOne));
-router.delete('/api/products/:id', pipe(authStage, adminStage, productHandler.deleteOne));
+router.get('/api/products', pipe(controllers.product.getAll));
+router.get('/api/products/:id', pipe(controllers.product.getOne));
+router.post('/api/products', pipe(authStage, adminStage, validationStage({ sanitize: sanitizeProductData }), controllers.product.createOne));
+router.put('/api/products/:id', pipe(authStage, adminStage, validationStage({ sanitize: sanitizeProductData }), controllers.product.updateOne));
+router.delete('/api/products/:id', pipe(authStage, adminStage, controllers.product.deleteOne));
 router.get('/api/cart', pipe(authStage, controllers.cart.getCart));
 router.post('/api/cart', pipe(authStage, validationStage({ sanitize: sanitizeCartData, validate: validateCartInput}), controllers.cart.addItem));
 router.delete('/api/cart/:productId', pipe(authStage, controllers.cart.removeItem));

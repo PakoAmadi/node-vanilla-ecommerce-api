@@ -1,6 +1,7 @@
 'use strict';
 
-const {InsufficientStockError, InvalidProductIdError, InvalidQuantityError} = require('../errors');
+const {InsufficientStockError, InvalidQuantityError} = require('../errors');
+const Product = require('../product/Product');
 const {toCents, fromCents} = require('../money');
 
 const STOCK_ERROR_MESSAGE = 'Not enough stock available';
@@ -10,15 +11,8 @@ const STOCK_ERROR_MESSAGE = 'Not enough stock available';
  * this module only decides what is allowed and how totals are calculated.
  */
 const Cart = {
-  /**
-   * @param {unknown} value raw id (body or URL param)
-   * @returns {number} positive integer id
-   */
-  parseProductId(value) {
-    const id = typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value;
-    if (!Number.isSafeInteger(id) || id <= 0) throw new InvalidProductIdError();
-    return id;
-  },
+  /** Product id rules belong to Product; kept here for readability of cart use cases. */
+  parseProductId: Product.parseId,
 
   /**
    * Rule: quantity already in the cart + requested quantity must not exceed stock.

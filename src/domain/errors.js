@@ -30,6 +30,24 @@ class ProductNotFoundError extends DomainError {
   constructor(message = 'Product not found') {
     super(message);
   }
+
+  static forId(id) {
+    return new ProductNotFoundError(`Product with ID ${id} not found`);
+  }
+}
+
+class ProductTitleTakenError extends DomainError {
+  constructor(message = 'Product with this name already exists') {
+    super(message);
+  }
+}
+
+// Carries per-field messages: {title: '...', price: '...'}
+class InvalidProductError extends DomainError {
+  constructor(details = {}) {
+    super('Invalid product data');
+    this.details = details;
+  }
 }
 
 class CartItemNotFoundError extends DomainError {
@@ -56,6 +74,8 @@ module.exports = {
   EmptyCartError,
   InsufficientStockError,
   ProductNotFoundError,
+  ProductTitleTakenError,
+  InvalidProductError,
   CartItemNotFoundError,
   InvalidProductIdError
 };

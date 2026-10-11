@@ -31,7 +31,9 @@ module.exports = class RouterDispatcher {
     const mapped = mapError(error);
     if (mapped) {
       res.writeHead(mapped.statusCode);
-      return res.end(JSON.stringify({error: mapped.message}));
+      const body = {error: mapped.message};
+      if (mapped.details) body.details = mapped.details;
+      return res.end(JSON.stringify(body));
     }
 
     console.error('[CRITICAL SERVER ERROR]:', error.stack);
